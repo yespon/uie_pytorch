@@ -21,6 +21,7 @@ from typing import Optional, Tuple
 
 from ernie import ErnieModel, ErniePreTrainedModel
 from ernie_m import ErnieMModel, ErnieMPreTrainedModel
+from ernie_layout import ErnieLayoutModel, ErnieLayoutPreTrainedModel
 
 
 @dataclass
@@ -304,3 +305,29 @@ class UIEM(ErnieMPreTrainedModel):
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
+
+
+class UIEX(ErnieLayoutPreTrainedModel):
+    def __init__(self, config: ErnieLayoutConfig):
+        super(UIEX, self).__init__(config)
+        self.encoder = ErnieLayoutModel(config)
+        self.config = config
+        hidden_size = self.config.hidden_size
+
+        self.linear_start = nn.Linear(hidden_size, 1)
+        self.linear_end = nn.Linear(hidden_size, 1)
+        self.sigmoid = nn.Sigmoid()
+
+        self.post_init()
+
+    def forward(self, input_ids: Optional[torch.Tensor] = None, position_ids: Optional[torch.Tensor] = None,
+        attention_mask: Optional[torch.Tensor] = None, head_mask: Optional[torch.Tensor] = None,
+        inputs_embeds=None,
+        start_positions=None,
+        end_positions=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+    ):
+
+        start_logits = self.linear_start()
