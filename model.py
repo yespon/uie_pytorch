@@ -21,7 +21,7 @@ from typing import Optional, Tuple
 
 from ernie import ErnieModel, ErniePreTrainedModel
 from ernie_m import ErnieMModel, ErnieMPreTrainedModel
-from ernie_layout import ErnieLayoutModel, ErnieLayoutPreTrainedModel
+from ernie_layout import ErnieLayoutConfig, ErnieLayoutModel, ErnieLayoutPretrainedModel
 
 
 @dataclass
@@ -307,10 +307,10 @@ class UIEM(ErnieMPreTrainedModel):
         )
 
 
-class UIEX(ErnieLayoutPreTrainedModel):
+class UIEX(ErnieLayoutPretrainedModel):
     def __init__(self, config: ErnieLayoutConfig):
         super(UIEX, self).__init__(config)
-        self.encoder = ErnieLayoutModel(config)
+        self.ernie_layout = ErnieLayoutModel(config)
         self.config = config
         hidden_size = self.config.hidden_size
 
@@ -320,14 +320,22 @@ class UIEX(ErnieLayoutPreTrainedModel):
 
         self.post_init()
 
-    def forward(self, input_ids: Optional[torch.Tensor] = None, position_ids: Optional[torch.Tensor] = None,
-        attention_mask: Optional[torch.Tensor] = None, head_mask: Optional[torch.Tensor] = None,
-        inputs_embeds=None,
-        start_positions=None,
-        end_positions=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
-    ):
+    def forward(self, input_ids, token_type_ids=None, position_ids=None, attention_mask=None, bbox=None, image=None):
+        outputs = self.ernie_layout(
+            input_ids=input_ids,
+            token_type_ids=token_type_ids,
+            position_ids=position_ids,
+            attention_mask=attention_mask,
+            bbox=bbox,
+            image=image
+        )
+        seq_length = input_ids.size()[1]
+        sequence_output = outputs[0][:, :seq_length]
+        start_logits = self.linear_start(sequence_output)
+        start_logits = torch.squeeze(start_logits, dim=-1)
+        start_prob = self.sigmoid(start_logits)
+        end_logits = self.linear_end(sequence_output)
+        end_logits = torch.squeeze(end_logits, dim=-1)
+        end_prob = self.sigmoid(end_logits)
 
-        start_logits = self.linear_start()
+        return start_prob, end_prob
