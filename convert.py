@@ -195,6 +195,20 @@ MODEL_MAP = {
             "tokenizer_config.json":
             "base64:eyJkb19sb3dlcl9jYXNlIjogdHJ1ZSwgInVua190b2tlbiI6ICJbVU5LXSIsICJzZXBfdG9rZW4iOiAiW1NFUF0iLCAicGFkX3Rva2VuIjogIltQQURdIiwgImNsc190b2tlbiI6ICJbQ0xTXSIsICJtYXNrX3Rva2VuIjogIltNQVNLXSIsICJ0b2tlbml6ZXJfY2xhc3MiOiAiRXJuaWVUb2tlbml6ZXIifQ=="
         }
+    },
+    "uie-x-base": {
+        "resource_file_urls": {
+            "model_state.pdparams":
+            "https://bj.bcebos.com/paddlenlp/taskflow/information_extraction/uie_x_base_v0.1/model_state.pdparams",
+            "model_config.json":
+            "https://bj.bcebos.com/paddlenlp/taskflow/information_extraction/uie_x_base/model_config.json",
+            "vocab.txt":
+            "https://bj.bcebos.com/paddlenlp/taskflow/information_extraction/uie_x_base/vocab.txt",
+            "special_tokens_map.json":
+            "https://bj.bcebos.com/paddlenlp/taskflow/information_extraction/uie_x_base/special_tokens_map.json",
+            "tokenizer_config.json":
+            "https://bj.bcebos.com/paddlenlp/taskflow/information_extraction/uie_x_base/tokenizer_config.json"
+        }
     }
 }
 
